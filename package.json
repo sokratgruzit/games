@@ -1,0 +1,22 @@
+{
+  "name": "games",
+  "version": "1.0.0",
+  "description": "Monorepo for canvas and three.js experiments",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "build:all": "node scripts/build-all.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sokratgruzit/games.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sokratgruzit/games/issues"
+  },
+  "homepage": "https://github.com/sokratgruzit/games#readme"
+}
