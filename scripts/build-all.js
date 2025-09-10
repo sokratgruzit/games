@@ -4,7 +4,7 @@ const path = require("path");
 
 const repoRoot = path.resolve(__dirname, ".."); // корень репки, т.е. games
 const gamesDir = repoRoot; // папки с играми лежат прямо здесь
-const outRoot = path.join(repoRoot, "docs", "games"); // куда копировать сборку
+const outRoot = path.join(repoRoot, "docs"); // сюда будем копировать сборку каждой игры
 
 function copyRecursive(src, dest) {
   if (!fs.existsSync(src)) return;
@@ -37,14 +37,14 @@ for (const g of games) {
   execSync('npm run build', { cwd: gamePath, stdio: 'inherit' });
 
   const dist = path.join(gamePath, "dist");
-  const target = path.join(outRoot, g);
+  const target = path.join(outRoot, g); // теперь копируем прямо в docs/<имя-игры>
 
   // очистка старой папки
   if (fs.existsSync(target)) fs.rmSync(target, { recursive: true, force: true });
   fs.mkdirSync(target, { recursive: true });
 
   copyRecursive(dist, target);
-  console.log(`-> copied to docs/games/${g}`);
+  console.log(`-> copied to docs/${g}`);
 }
 
 console.log("\nALL BUILDS FINISHED");
