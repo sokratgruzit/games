@@ -1,7 +1,5 @@
 # 🎮 Stay Down
 
-![Stay Down Gameplay](https://sokratgruzit.github.io/games/stay-down)
-
 **Live demo:** [https://sokratgruzit.github.io/games/stay-down](https://sokratgruzit.github.io/games/stay-down)
 
 ---
@@ -33,6 +31,7 @@
 
 ## 📦 Структура проекта
 
+```
 stay-down/
 ├─ index.html ← Главная страница игры
 ├─ demo.gif ← Анимация игрового процесса
@@ -56,6 +55,7 @@ stay-down/
 │ └─ ... ← другие вспомогательные файлы
 ├─ package.json
 └─ STAY_DOWN_README.md
+```
 
 - `game-classes/` — все игровые сущности: игрок, платформы, коллизии, движок
 - `constants.ts` — размеры мира, гравитация, физика
