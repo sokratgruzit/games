@@ -18,6 +18,7 @@ import { Score } from "./game-classes/score";
 import { SpriteLoader } from "./game-classes/sprite-loader";
 import { AnimatedSprite } from "./game-classes/animated-sprite";
 import { BladesManager } from "./game-classes/blade-manager";
+import { Background } from "./game-classes/background";
 
 export class Game {
     canvas: HTMLCanvasElement;
@@ -31,12 +32,14 @@ export class Game {
     itemManager: ItemManager | null;
     bladesManager: BladesManager;
     score: Score;
+    background: Background;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d", { alpha: true })!;
 
         this.itemManager = null;
+        this.background = new Background(this.ctx, WORLD_WIDTH, WORLD_HEIGHT);
         this.bladesManager = new BladesManager([]);
         this.controller = new Controller(false, false, false, false, false, false);
         this.engine = new GameEngine(() => this.update(), () => this.render());
@@ -136,7 +139,8 @@ export class Game {
                 this.collisions,
                 this.itemManager,
                 this.score,
-                this.bladesManager
+                this.bladesManager,
+                this.background
             );
 
             // Генерация платформ и предметов

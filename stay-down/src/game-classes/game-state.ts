@@ -14,6 +14,7 @@ import { ItemManager } from "./item-manager";
 import { Score } from "./score";
 import { Ground } from "./ground";
 import { BladesManager } from "./blade-manager";
+import { Background } from "./background";
 
 type LetterAnim = {
     char: string;
@@ -37,6 +38,7 @@ export class GameState {
     itemManager: ItemManager;
     score: Score;
     ground: Ground;
+    background: Background;
 
     private letters: LetterAnim[] = [];
     private lettersInitialized = false;
@@ -51,6 +53,7 @@ export class GameState {
         itemManager: ItemManager,
         score: Score,
         bladesManager: BladesManager,
+        background: Background
     ) {
         this.player = player;
         this.controller = controller;
@@ -61,9 +64,12 @@ export class GameState {
         this.score = score;
         this.bladesManager = bladesManager;
         this.ground = new Ground(0, GROUND.top, WORLD_WIDTH, 50, "#000");
+        this.background = background;
     }
 
     update() {
+        this.background.update(this.player.y);
+
         // --- обработка Game Over и Pause ---
         if (this.isGameOver) {
             // Enter → разлёт букв
@@ -119,8 +125,7 @@ export class GameState {
 
     render() {
         // фон
-        this.ctx.fillStyle = "#838282ff";
-        this.ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        this.background.render();
 
         // платформы
         const platforms = this.platformManager.activePlatforms;
@@ -159,7 +164,7 @@ export class GameState {
     }
 
     private checkGameEnd(player: Player) {
-        if (player.getTop() < 4) {
+        if (player.getTop() < 24) {
             player.y = player.old_y = GROUND.top - player.height;
             player.x = 0;
             this.score.value = 0;
