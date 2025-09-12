@@ -9,7 +9,7 @@ export class Ground extends Rectangle2D {
         this.color = color;
 
         this.image = new Image();
-        this.image.src = "/assets/ground-stay-down.png";
+        this.image.src = "assets/ground-stay-down.png";
     }
 
     render(ctx: CanvasRenderingContext2D) {

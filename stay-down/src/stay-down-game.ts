@@ -41,9 +41,9 @@ export class Game {
         this.controller = new Controller(false, false, false, false, false, false);
         this.engine = new GameEngine(() => this.update(), () => this.render());
         this.platformManager = new PlatformManager([], [
-            "/assets/lake-land-stay-down.png",
-            "/assets/wood-land-stay-down.png",
-            "/assets/palm-land-stay-down.png"
+            "assets/lake-land-stay-down.png",
+            "assets/wood-land-stay-down.png",
+            "assets/palm-land-stay-down.png"
         ]);
         this.collisions = new DetectCollisions();
         this.score = new Score();
@@ -81,27 +81,27 @@ export class Game {
         try {
             // Ждём загрузку кадров спрайта
             const idleFrames = await SpriteLoader.loadSpriteFrames(
-                "/assets/idle-stay-down.png",
+                "assets/idle-stay-down.png",
                 32, 32, 3
             );
 
             const runFrames = await SpriteLoader.loadSpriteFrames(
-                "/assets/run-stay-down.png",
+                "assets/run-stay-down.png",
                 32, 32, 3
             );
 
             const jumpFrames = await SpriteLoader.loadSpriteFrames(
-                "/assets/jump-stay-down.png",
+                "assets/jump-stay-down.png",
                 32, 32, 3
             );
 
             const slideFrames = await SpriteLoader.loadSpriteFrames(
-                "/assets/slide-stay-down.png",
+                "assets/slide-stay-down.png",
                 32, 32, 3
             );
 
             const itemFrames = await SpriteLoader.loadSpriteFrames(
-                "/assets/stars-stay-down.png",
+                "assets/stars-stay-down.png",
                 32, 32, 3
             );
 

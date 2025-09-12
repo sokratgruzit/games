@@ -22,7 +22,7 @@ export class Blade extends Rectangle2D {
         super(x, y, width, height);
         this.color = color;
         this.image = new Image();
-        this.image.src = "/assets/blade-stay-down.png";
+        this.image.src = "assets/blade-stay-down.png";
 
         this.floatTime = Math.random() * Math.PI * 2;
         this.floatAmplitude = 3 + Math.random() * 5;
