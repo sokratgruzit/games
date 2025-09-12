@@ -11,4 +11,34 @@ export interface ControllerState {
     right: boolean;
     up: boolean;
     pause: boolean;
+    down: boolean;
+}
+
+export interface Flash {
+    text: string;
+    x: number;
+    y: number;
+    timer: number;
+}
+
+export interface FlyingFlash {
+    text: string;
+    x: number;
+    y: number;
+    startX: number;
+    startY: number;
+    targetX: number;
+    targetY: number;
+    timer: number;
+    points: number;
+    merged: boolean;
+    scale: number;
+    color: string;
+    alpha: number;
+}
+
+export interface Frame {
+    image: HTMLCanvasElement;
+    width: number;
+    height: number;
 }

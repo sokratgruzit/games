@@ -63,4 +63,12 @@ export class Rectangle2D implements Rectangle2DState {
         this.old_y = this.y; 
         this.y += dy;
     }
+
+    getCenterX() {
+        return this.x + this.width * 0.5;
+    }
+
+    getCenterY() {
+        return this.y + this.height * 0.5;
+    }
 }

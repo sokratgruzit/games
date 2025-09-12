@@ -1,5 +1,5 @@
 export class GameEngine {
-    update!: () => void;
+    update!: (timeStamp: number) => void;
     render!: () => void;
     raf: number | undefined;
     timeStep: number;
@@ -29,7 +29,7 @@ export class GameEngine {
         if (this.accumulated > 60) this.accumulated = this.timeStep;
 
         while(this.accumulated >= this.timeStep) {
-            this.update();
+            this.update(timeStamp);
             updated = true;
             this.accumulated -= this.timeStep;
         }
