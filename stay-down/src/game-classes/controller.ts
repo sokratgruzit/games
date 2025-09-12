@@ -1,5 +1,7 @@
 import type { ControllerState } from "../types";
 
+import { SoundManager } from "./sound-manager";
+
 export class Controller implements ControllerState {
     left: boolean;
     right: boolean;
@@ -8,10 +10,13 @@ export class Controller implements ControllerState {
     pause: boolean;
     start: boolean;
     gameOver: boolean;
+    soundManager: SoundManager;
 
     private pauseElement: HTMLDivElement | null = null;
+    private pauseIcon: HTMLDivElement | null = null;
+    private pauseIconInner: HTMLDivElement | null = null;
 
-    constructor(left: boolean, right: boolean, up: boolean, pause: boolean, down: boolean, start: boolean) {
+    constructor(left: boolean, right: boolean, up: boolean, pause: boolean, down: boolean, start: boolean, soundManager: SoundManager) {
         this.left = left;
         this.right = right;
         this.up = up;
@@ -19,22 +24,20 @@ export class Controller implements ControllerState {
         this.down = down;
         this.start = start;
         this.gameOver = false;
+        this.soundManager = soundManager;
     }
 
     private showPauseOverlay() {
         if (!this.pauseElement) {
             this.pauseElement = document.createElement("div");
-            this.pauseElement.innerText = "PAUSED";
-            Object.assign(this.pauseElement.style, {
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                fontSize: "48px",
-                color: "white",
-                pointerEvents: "none",
-                zIndex: "1000"
-            });
+            this.pauseIcon = document.createElement("div");
+            this.pauseIconInner = document.createElement("div");
+            this.pauseElement.setAttribute("class", "pause-layout");
+            this.pauseIcon.setAttribute("class", "pause-icon");
+            this.pauseIconInner.setAttribute("class", "pause-icon-inner");
+
+            this.pauseIcon.appendChild(this.pauseIconInner );
+            this.pauseElement.appendChild(this.pauseIcon);
             document.body.appendChild(this.pauseElement);
         }
     }
@@ -60,8 +63,10 @@ export class Controller implements ControllerState {
                 
                 if (this.pause) {
                     this.showPauseOverlay();
+                    this.soundManager.pauseBg();
                 } else {
                     this.removePauseOverlay();
+                    this.soundManager.resumeBg();
                 }
 
                 break;

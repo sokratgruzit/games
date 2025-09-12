@@ -19,6 +19,7 @@ import { SpriteLoader } from "./game-classes/sprite-loader";
 import { AnimatedSprite } from "./game-classes/animated-sprite";
 import { BladesManager } from "./game-classes/blade-manager";
 import { Background } from "./game-classes/background";
+import { SoundManager } from "./game-classes/sound-manager";
 
 export class Game {
     canvas: HTMLCanvasElement;
@@ -33,15 +34,17 @@ export class Game {
     bladesManager: BladesManager;
     score: Score;
     background: Background;
+    soundManager: SoundManager;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d", { alpha: true })!;
 
         this.itemManager = null;
+        this.soundManager = new SoundManager();
         this.background = new Background(this.ctx, WORLD_WIDTH, WORLD_HEIGHT);
         this.bladesManager = new BladesManager([]);
-        this.controller = new Controller(false, false, false, false, false, false);
+        this.controller = new Controller(false, false, false, false, false, false, this.soundManager);
         this.engine = new GameEngine(() => this.update(), () => this.render());
         this.platformManager = new PlatformManager([], [
             "assets/lake-land-stay-down.png",
@@ -140,7 +143,8 @@ export class Game {
                 this.itemManager,
                 this.score,
                 this.bladesManager,
-                this.background
+                this.background,
+                this.soundManager
             );
 
             // Генерация платформ и предметов

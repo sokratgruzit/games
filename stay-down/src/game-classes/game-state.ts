@@ -15,6 +15,7 @@ import { Score } from "./score";
 import { Ground } from "./ground";
 import { BladesManager } from "./blade-manager";
 import { Background } from "./background";
+import { SoundManager } from "./sound-manager";
 
 type LetterAnim = {
     char: string;
@@ -39,6 +40,7 @@ export class GameState {
     score: Score;
     ground: Ground;
     background: Background;
+    soundManager: SoundManager;
 
     private letters: LetterAnim[] = [];
     private lettersInitialized = false;
@@ -53,7 +55,8 @@ export class GameState {
         itemManager: ItemManager,
         score: Score,
         bladesManager: BladesManager,
-        background: Background
+        background: Background,
+        soundManager: SoundManager
     ) {
         this.player = player;
         this.controller = controller;
@@ -65,6 +68,7 @@ export class GameState {
         this.bladesManager = bladesManager;
         this.ground = new Ground(0, GROUND.top, WORLD_WIDTH, 50, "#000");
         this.background = background;
+        this.soundManager = soundManager;
     }
 
     update() {
@@ -104,10 +108,14 @@ export class GameState {
 
         if (this.controller.left) this.player.moveLeft();
         if (this.controller.right) this.player.moveRight();
-        if (this.controller.up) this.player.jump();
+        if (this.controller.up) {
+            this.player.jump();
+            this.soundManager.play("jump");
+        }
         if (this.controller.down) {
             const direction = this.player.velocity_x >= 0 ? 1 : -1;
             this.player.slide(direction);
+            this.soundManager.play("slide");
         }
 
         this.player.updatePosition(GRAVITY, FRICTION);
@@ -172,6 +180,8 @@ export class GameState {
             this.controller.getGameOver(true);
             if (!this.lettersInitialized) {
                 this.initLettersAnim("GAME OVER");
+                this.soundManager.pauseBg();
+                this.soundManager.play("gameover");
             }
         }
     }
@@ -233,6 +243,7 @@ export class GameState {
     }
 
     private restart() {
+        this.soundManager.resumeBg();
         this.isGameOver = false;
         this.letters = [];
         this.lettersInitialized = false;
@@ -244,7 +255,7 @@ export class GameState {
 
         this.controller.start = false;
         this.controller.getGameOver(false);
-        this.score.value = 0;
+        this.score.reset();
         this.createPlatforms();
         this.createItems();
         this.createBlades();
@@ -271,6 +282,7 @@ export class GameState {
         for (let index = items.length - 1; index >= 0; --index) {
             const item = items[index];
             if (this.collisions.itemCollision(this.player, item)) {
+                this.soundManager.play("coin");
                 this.score.add(1, item.x, item.y);
                 item.setLeft(Math.random() * (WORLD_WIDTH - item.width));
                 item.setTop(Math.random() * (WORLD_HEIGHT - item.height - (WORLD_HEIGHT - GROUND.top)));

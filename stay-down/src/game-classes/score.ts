@@ -33,6 +33,13 @@ export class Score {
         }
     }
 
+    reset() {
+        this.value = 0;
+        this.flashes = [];
+        this.counterX = 80;
+        this.counterY = 24;
+    }
+
     update() {
         for (const f of this.flashes) {
             if (!f.merged) {
@@ -69,6 +76,9 @@ export class Score {
     }
 
     render(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = "#000";
+        ctx.fillRect(10, 8, 100, 30);
+
         // Статичная надпись
         ctx.fillStyle = "#fff";
         ctx.font = "20px Arial";
@@ -76,7 +86,7 @@ export class Score {
 
         // Основной счёт рядом
         ctx.fillStyle = "#fff";
-        ctx.font = "22px Arial";
+        ctx.font = "20px Arial";
         ctx.fillText(`${this.value}`, this.counterX + 10, this.counterY - 8);
 
         // Анимация полёта
