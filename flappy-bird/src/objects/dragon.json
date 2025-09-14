@@ -1,0 +1,95 @@
+{
+	"frames": {
+		"frame-1.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 939,
+				"h": 678
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 939,
+				"h": 678
+			},
+			"sourceSize": {
+				"w": 939,
+				"h": 678
+			}
+		},
+		"frame-2.png": {
+			"frame": {
+				"x": 942,
+				"y": 1,
+				"w": 939,
+				"h": 678
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 939,
+				"h": 678
+			},
+			"sourceSize": {
+				"w": 939,
+				"h": 678
+			}
+		},
+		"frame-3.png": {
+			"frame": {
+				"x": 1883,
+				"y": 1,
+				"w": 939,
+				"h": 678
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 939,
+				"h": 678
+			},
+			"sourceSize": {
+				"w": 939,
+				"h": 678
+			}
+		},
+		"frame-4.png": {
+			"frame": {
+				"x": 2824,
+				"y": 1,
+				"w": 939,
+				"h": 678
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 939,
+				"h": 678
+			},
+			"sourceSize": {
+				"w": 939,
+				"h": 678
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "dragon.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 3764,
+			"h": 680
+		},
+		"scale": "1"
+	}
+}
