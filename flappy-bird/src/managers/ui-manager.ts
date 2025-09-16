@@ -1,60 +1,41 @@
-import { EventBus } from "./event-bus";
+import { GameStateComponent } from "../ecs/components";
+import type { Entity } from "../ecs/entity";
 
 export class UIManager {
     private ctx: CanvasRenderingContext2D;
     private width: number;
     private height: number;
-    private score: number = 0;
-    private paused: boolean = false;
-    private gameOver: boolean = false;
+    private gameState: Entity;
 
-    constructor(ctx: CanvasRenderingContext2D, width: number, height: number, eventBus: EventBus) {
+    constructor(ctx: CanvasRenderingContext2D, width: number, height: number, gameState: Entity) {
         this.ctx = ctx;
         this.width = width;
         this.height = height;
-
-        // Подписки на события
-        eventBus.on("scoreIncrease", () => {
-            this.score++;
-        });
-
-        eventBus.on("pauseToggled", () => {
-            this.paused = !this.paused;
-        });
-
-        eventBus.on("restartGame", () => {
-            this.reset();
-        });
-
-        eventBus.on("gameOver", () => {
-            this.gameOver = true;
-        });
-    }
-
-    private reset() {
-        this.score = 0;
-        this.paused = false;
-        this.gameOver = false;
+        this.gameState = gameState;
     }
 
     /** Вызывается напрямую из GameController при отрисовке кадра */
     public render() {
-        this.drawScore();
-        if (this.paused && !this.gameOver) {
+        const game = this.gameState.getComponent<GameStateComponent>("game");
+
+        this.drawScore(game?.score || 0);
+
+        if (game?.paused && !game?.gameOver) {
             this.drawPauseText();
         }
-        if (this.gameOver) {
+
+        if (game?.gameOver) {
             this.drawGameOverText();
         }
     }
 
-    private drawScore() {
+    private drawScore(score: number) {
         this.ctx.save();
         this.ctx.font = "bold 24px sans-serif";
         this.ctx.fillStyle = "white";
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 4;
-        const text = `Score: ${this.score}`;
+        const text = `Score: ${score}`;
         this.ctx.textAlign = "right";
         this.ctx.textBaseline = "top";
         this.ctx.strokeText(text, this.width - 20, 20);

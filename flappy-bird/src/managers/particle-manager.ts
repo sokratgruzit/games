@@ -1,34 +1,20 @@
-import { Particle } from "../objects/particle";
-import { Bird } from "../objects/bird";
+import { createParticleEntity } from "../ecs/entities";
+import type { Entity } from "../ecs/entity";
 
 export class ParticleManager {
-    particles: Particle[] = [];
-    gameSpeed: number = 2;
+    entities: Entity[] = [];
+    private idCounter = 1;
 
-    update(bird: Bird, color: string) {
-        // Генерируем новую частицу возле птицы
-        this.particles.unshift(new Particle(bird.x, bird.y, color, this.gameSpeed));
-
-        // Обновляем все частицы
-        for (let p of this.particles) {
-            p.update();
+    generate(x: number, y: number, color: string) {
+        const entity = createParticleEntity(this.idCounter++, x, y, color);
+        this.entities.unshift(entity);
+        
+        if (this.entities.length > 200) {
+            this.entities.length = 200;
         }
-
-        // Ограничиваем количество частиц
-        if (this.particles.length > 200) this.particles.length = 200;
-    }
-
-    draw(ctx: CanvasRenderingContext2D) {
-        for (let p of this.particles) {
-            p.draw(ctx);
-        }
-    }
-
-    setGameSpeed(speed: number) {
-        this.gameSpeed = speed;
     }
 
     clear() {
-        this.particles.length = 0;
+        this.entities.length = 0;
     }
 }

@@ -1,48 +1,22 @@
-import { Obstacle } from "../objects/obstacle";
-import { EventBus } from "../managers/event-bus";
+import { createObstacleEntity } from "../ecs/entities";
+import type { Entity } from "../ecs/entity";
 
 export class ObstacleManager {
-    obstacles: Obstacle[] = [];
-    gameSpeed: number = 2;
-    private eventBus: EventBus;
+    entities: Entity[] = [];
+    private idCounter = 1;
 
-    constructor(eventBus: EventBus) {
-        this.eventBus = eventBus;
-    }
-
-    updateAndGenerate(width: number, height: number, color: string, frame: number) {
-        // Создаем новое препятствие
+    generate(canvasWidth: number, canvasHeight: number, color: string, frame: number) {
         if (frame % 300 === 0) {
-            const obs = new Obstacle(width, height, color, this.eventBus);
-            obs.setGameSpeed(this.gameSpeed);
-            this.obstacles.unshift(obs);
+            const entity = createObstacleEntity(this.idCounter++, canvasWidth, canvasHeight, color);
+            this.entities.push(entity);
         }
 
-        // Обновляем все препятствия
-        for (const obs of this.obstacles) {
-            obs.update();
-        }
-
-        // Ограничиваем количество
-        if (this.obstacles.length > 20) {
-            this.obstacles.length = 20;
-        }
-    }
-
-    draw(ctx: CanvasRenderingContext2D) {
-        for (const obs of this.obstacles) {
-            obs.draw(ctx);
-        }
-    }
-
-    setGameSpeed(speed: number) {
-        this.gameSpeed = speed;
-        for (const obs of this.obstacles) {
-            obs.setGameSpeed(speed);
+        if (this.entities.length > 20) {
+            this.entities.length = 20;
         }
     }
 
     clear() {
-        this.obstacles.length = 0;
+        this.entities.length = 0;
     }
 }

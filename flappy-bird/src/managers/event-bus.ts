@@ -1,4 +1,4 @@
-type EventHandler = (...args: any[]) => void;
+import type { EventHandler } from "../types";
 
 export class EventBus {
     private listeners: Record<string, EventHandler[]> = {};
