@@ -9,7 +9,10 @@ import {
 import { 
     createBirdEntity, 
     createGameEntity,
-    createExplosionEntity
+    createExplosionEntity,
+    createMoonEntity,
+    createImageEntity,
+    createGradientEntity
 } from "./ecs/entities";
 import { 
     BirdComponent, 
@@ -18,8 +21,7 @@ import {
     SpriteComponent, 
     GameStateComponent
 } from "./ecs/components";
-import { Background } from "./objects/background";
-import { GameEngine } from "./objects/engine";
+import { GameEngine } from "./engine";
 import { ParticleManager } from "./managers/particle-manager";
 import { ObstacleManager } from "./managers/obstacle-manager";
 import { InputManager } from "./managers/input-manager";
@@ -27,14 +29,13 @@ import { SoundManager } from "./managers/sound-manager";
 import { EventBus } from "./managers/event-bus";
 import { UIManager } from "./managers/ui-manager";
 
-import birdJson from "./objects/dragon.json";
-import explosionJson from "./objects/explosion.json";
+import birdJson from "./sprite-data/dragon.json";
+import explosionJson from "./sprite-data/explosion.json";
 import { Entity } from "./ecs/entity";
 
 export class GameController {
     private ctx: CanvasRenderingContext2D;
     private explosions: Entity[];
-    private background: Background;
     private engine: GameEngine;
     private width: number;
     private height: number;
@@ -45,7 +46,6 @@ export class GameController {
 
     uiManager: UIManager;
     soundManager: SoundManager;
-    gameSpeed: number;
 
     private entityIdCounter = 1;
     private physicsSystem: PhysicsSystem;
@@ -57,16 +57,29 @@ export class GameController {
 
     private birdEntity: Entity;
     private gameEntity: Entity;
+    private moonEntity: Entity;
+    private imageEntity1: Entity;
+    private imageEntity2: Entity;
+    private imageEntity3: Entity;
+    private gradientEntity: Entity;
 
     constructor(ctx: CanvasRenderingContext2D, width: number, height: number) {
         this.ctx = ctx;
         this.width = width;
         this.height = height;
-        this.gameSpeed = 2;
 
         this.gameEntity = createGameEntity(this.entityIdCounter++);
-        this.birdEntity = createBirdEntity(this.entityIdCounter++, width, height, birdJson, 0.1);
-        
+        this.birdEntity = createBirdEntity(this.entityIdCounter++, width, height, birdJson, 0.1, "bird");
+        this.moonEntity = createMoonEntity(this.entityIdCounter++, width, height, "assets/sprites/moon.png", "moon");
+        this.imageEntity1 = createImageEntity(this.entityIdCounter++, 0, -60, 0.05, width, height, width, height, "assets/sprites/far-bg.png", "image");
+        this.imageEntity2 = createImageEntity(this.entityIdCounter++, 0, -40, 0.1, width, height, width, height, "assets/sprites/middle-bg.png", "image");
+        this.imageEntity3 = createImageEntity(this.entityIdCounter++, 0, 0, 0.3, width, height, width, height, "assets/sprites/near-bg.png", "image");
+        this.gradientEntity = createGradientEntity(this.entityIdCounter++, width, height, [
+            { stop: 0, color: "rgba(200, 0, 0, 0.7)" },
+            { stop: 0.5, color: "rgba(255, 100, 50, 0.4)" },
+            { stop: 1, color: "rgba(255, 200, 150, 0.2)" },
+        ], "gradient");
+
         this.eventBus = new EventBus();
         this.physicsSystem = new PhysicsSystem();
         this.renderSystem = new RenderSystem(this.ctx);
@@ -79,15 +92,14 @@ export class GameController {
         this.particleManager = new ParticleManager();
         this.obstacleManager = new ObstacleManager();
 
-        this.background = new Background(width, height);
         this.soundManager = new SoundManager(this.eventBus);
         this.uiManager = new UIManager(this.ctx, this.width, this.height, this.gameEntity);
         this.explosions = [];
 
         this.eventBus.on("birdCollision", (x: number, y: number) => {
-            const explosionEntity1 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 1);
-            const explosionEntity2 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 1.5);
-            const explosionEntity3 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 2);
+            const explosionEntity1 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 1, "explosion");
+            const explosionEntity2 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 1.5, "explosion");
+            const explosionEntity3 = createExplosionEntity(this.entityIdCounter++, x, y, explosionJson, 2, "explosion");
             this.explosions.push(explosionEntity1);
             this.explosions.push(explosionEntity2);
             this.explosions.push(explosionEntity3);
@@ -95,10 +107,16 @@ export class GameController {
             this.eventBus.emit("explosionPlay", { x, y, index: 0 });
         });
 
+        this.eventBus.on("explosionPlay", ({ x, y, index }) => {
+            const explosionEntity = this.explosions[index];
+            if (!explosionEntity) return;
+
+            this.gameSystem.explode(explosionEntity, x, y);
+        });
+
         this.eventBus.on("explosionFinished", () => {
             const game = this.gameEntity.getComponent<GameStateComponent>("game");
             
-            console.log(game?.currentExplosionIndex)
             if (game && game.currentExplosionIndex < this.explosions.length) {
                 const pos = this.birdEntity.getComponent<PositionComponent>("position");
 
@@ -130,7 +148,7 @@ export class GameController {
 
     private restartGame() {
         this.eventBus.emit("gameStart");
-        this.birdEntity = createBirdEntity(this.entityIdCounter++, this.width, this.height, birdJson, 0.1);
+        this.birdEntity = createBirdEntity(this.entityIdCounter++, this.width, this.height, birdJson, 0.1, "bird");
         this.particleManager.clear();
         this.obstacleManager.clear();
     }
@@ -157,8 +175,21 @@ export class GameController {
             const input = this.birdEntity.getComponent<InputComponent>("input");
 
             if (sprite && bird && input) this.animationSystem.update(sprite, bird, input);
-            this.physicsSystem.update([this.birdEntity, ...this.obstacleManager.entities, ...this.particleManager.entities, ...this.explosions], this.eventBus, _dt);
+
+            this.physicsSystem.update([
+                this.birdEntity, 
+                ...this.obstacleManager.entities, 
+                ...this.particleManager.entities, 
+                ...this.explosions, 
+                this.moonEntity,
+                this.imageEntity1,
+                this.imageEntity2,
+                this.imageEntity3
+            ], this.eventBus, _dt);
+
             this.collisionSystem.collisions(this.birdEntity, this.obstacleManager.entities);
+        } else {
+            this.physicsSystem.update([...this.explosions, this.imageEntity1, this.imageEntity2, this.imageEntity3], this.eventBus, _dt);
         }
             
         const birdPos = this.birdEntity.getComponent<PositionComponent>("position");
@@ -175,26 +206,26 @@ export class GameController {
             this.width,
             this.height,
             `hsla(${gameState?.hue}, 100%, 50%, 0.8)`,
-            gameState?.frame || 0
+            gameState?.frame || 0,
+            20
         );
-
-        this.background.update(this.gameSpeed);
     };
 
     private render = () => {
         this.ctx.clearRect(0, 0, this.width, this.height);
 
-        this.background.draw(this.ctx);
-
         const gameState = this.gameEntity.getComponent<GameStateComponent>("game");
-        
-        let drawObjects: Entity[] = [];
 
-        if (!gameState?.gameOver) {
-            drawObjects = [this.birdEntity, ...this.obstacleManager.entities, ...this.particleManager.entities];
+        if (this.gradientEntity) {
+            let drawObjects: Entity[] = [this.gradientEntity, this.imageEntity1, this.imageEntity2, this.imageEntity3, this.moonEntity, ...this.explosions];
+    
+            if (!gameState?.gameOver) {
+                drawObjects = [this.gradientEntity, this.imageEntity1, this.imageEntity2, this.imageEntity3, ...this.obstacleManager.entities, ...this.particleManager.entities, this.moonEntity, this.birdEntity];
+            }
+            
+            this.renderSystem.render(drawObjects);
         }
-        
-        this.renderSystem.render(drawObjects.concat(this.explosions));
+       
         this.uiManager.render();
     };
 }

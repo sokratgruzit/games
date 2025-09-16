@@ -7,13 +7,15 @@ import {
     SizeComponent,
     InputComponent,
     BoundaryComponent,
-    PhysicsComponent
+    PhysicsComponent,
+    TypeComponent
 } from "../components/index";
 import type { SpriteJSON } from "../../types";
 
-export function createBirdEntity(id: number, canvasWidth: number, canvasHeight: number, spriteJSON: SpriteJSON, scale: number): Entity {
+export function createBirdEntity(id: number, canvasWidth: number, canvasHeight: number, spriteJSON: SpriteJSON, scale: number, type: string): Entity {
     const entity = new Entity(id);
 
+    const compType = new TypeComponent(type);
     const input = new InputComponent();
     const position = new PositionComponent(150, canvasHeight / 2);
     const velocity = new VelocityComponent(0, 0);
@@ -30,7 +32,8 @@ export function createBirdEntity(id: number, canvasWidth: number, canvasHeight: 
     .addComponent("sprite", sprite)
     .addComponent("size", size)
     .addComponent("boundary", boundary)
-    .addComponent("physics", physics);
+    .addComponent("physics", physics)
+    .addComponent("type", compType);
 
     return entity;
 }

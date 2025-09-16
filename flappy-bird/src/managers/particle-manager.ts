@@ -6,7 +6,7 @@ export class ParticleManager {
     private idCounter = 1;
 
     generate(x: number, y: number, color: string) {
-        const entity = createParticleEntity(this.idCounter++, x, y, color);
+        const entity = createParticleEntity(this.idCounter++, x, y, color, "particle");
         this.entities.unshift(entity);
         
         if (this.entities.length > 200) {

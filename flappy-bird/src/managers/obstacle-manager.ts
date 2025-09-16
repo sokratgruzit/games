@@ -5,9 +5,9 @@ export class ObstacleManager {
     entities: Entity[] = [];
     private idCounter = 1;
 
-    generate(canvasWidth: number, canvasHeight: number, color: string, frame: number) {
+    generate(canvasWidth: number, canvasHeight: number, color: string, frame: number, width: number) {
         if (frame % 300 === 0) {
-            const entity = createObstacleEntity(this.idCounter++, canvasWidth, canvasHeight, color);
+            const entity = createObstacleEntity(this.idCounter++, canvasWidth, canvasHeight, color, width, "obstacle");
             this.entities.push(entity);
         }
 

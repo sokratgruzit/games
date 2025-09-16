@@ -1,6 +1,6 @@
 import { Entity } from "../entity";
 import { EventBus } from "../../managers/event-bus";
-import { GameStateComponent, InputComponent } from "../components";
+import { GameStateComponent, InputComponent, PositionComponent, SpriteComponent, ExplosionComponent } from "../components";
 
 export class GameStateSystem {
     private game: GameStateComponent;
@@ -61,5 +61,19 @@ export class GameStateSystem {
 
         this.game.hue++;
         this.game.frame++;
+    }
+
+    explode(explosion: Entity, x: number, y: number) {
+        const pos = explosion.getComponent<PositionComponent>("position");
+        const sprite = explosion.getComponent<SpriteComponent>("sprite");
+        const exp = explosion.getComponent<ExplosionComponent>("explosion");
+
+        if (pos && sprite && exp) {
+            pos.x = x;
+            pos.y = y;
+            exp.active = true;
+            exp.frameTimer = 0;
+            sprite.currentFrame = 0;
+        }
     }
 }

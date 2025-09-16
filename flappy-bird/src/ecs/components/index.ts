@@ -11,6 +11,9 @@ import { BoundaryComponent } from "./boundary";
 import { GameStateComponent } from "./game";
 import { ScaleComponent } from "./scale";
 import { ExplosionComponent } from "./explosion";
+import { ImageComponent } from "./image";
+import { TypeComponent } from "./type";
+import { GradientComponent } from "./gradient";
 
 export {
     BirdComponent,
@@ -25,5 +28,8 @@ export {
     BoundaryComponent,
     GameStateComponent,
     ScaleComponent,
-    ExplosionComponent
+    ExplosionComponent,
+    ImageComponent,
+    TypeComponent,
+    GradientComponent
 };
