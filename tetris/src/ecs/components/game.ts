@@ -11,6 +11,7 @@ export class GameStateComponent {
     soundOn: boolean;
     fallSmooth: number;
     score: number;
+    lastBgAnimation: number;
 
     constructor() {
         this.grid = [];
@@ -23,5 +24,6 @@ export class GameStateComponent {
         this.soundOn = true;
         this.fallSmooth = 0.18;
         this.score = 0;
+        this.lastBgAnimation = 0;
     }
 }

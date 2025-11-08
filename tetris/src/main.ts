@@ -10,7 +10,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 window.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d", { alpha: false }) as CanvasRenderingContext2D;
+  const ctx = canvas.getContext("2d", { alpha: true }) as CanvasRenderingContext2D;
 
   canvas.width = 300;
   canvas.height = 660;

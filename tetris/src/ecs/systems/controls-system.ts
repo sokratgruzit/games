@@ -1,4 +1,4 @@
-export class Controls {
+export class ControlsSystem {
     private keysPressed: Record<string, boolean> = {};
     private keysJustPressed: Record<string, boolean> = {};
 

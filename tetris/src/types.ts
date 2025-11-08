@@ -20,3 +20,5 @@ export interface Pivot {
     x: number;
     y: number;
 }
+
+export type EventHandler = (...args: any[]) => void;

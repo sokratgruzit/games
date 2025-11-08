@@ -1,36 +1,51 @@
-import { Controls } from "./controls";
-
-import { createTetrominoEntity, createGameEntity } from "./ecs/entities";
 import { Entity } from "./ecs/entity";
-import { RenderSystem } from "./ecs/systems/render-system";
-import { PhysicsSystem } from "./ecs/systems/physics-system";
-import { CollisionSystem } from "./ecs/systems/collision-system";
-import { GameStateSystem } from "./ecs/systems/game-system";
 
-import type { GameStateComponent, TetrominoComponent } from "./ecs/components";
+import { 
+    createTetrominoEntity, 
+    createGameEntity 
+} from "./ecs/entities";
+
+import { 
+    RenderSystem, 
+    PhysicsSystem, 
+    CollisionSystem, 
+    GameStateSystem,
+    ControlsSystem
+} from "./ecs/systems";
+
+import { EventBus } from "./managers"
+
+import type { 
+    GameStateComponent, 
+    TetrominoComponent 
+} from "./ecs/components";
 
 export class Game {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    tetromino: Entity;
+    tetromino: Entity | null;
     gameState: Entity;
-    controls: Controls;
+    controls: ControlsSystem;
     private entityIdCounter = 1;
     private renderSystem: RenderSystem;
     private physicsSystem: PhysicsSystem;
     private collisionSystem: CollisionSystem;
     private gameStateSystem: GameStateSystem;
+    private eventBus: EventBus;
 
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+        this.tetromino = null;
         this.canvas = canvas;
         this.ctx = ctx;
+        this.eventBus = new EventBus();
         this.collisionSystem = new CollisionSystem();
-        this.controls = new Controls();
+        this.controls = new ControlsSystem();
         this.renderSystem = new RenderSystem(this.ctx);
         this.physicsSystem = new PhysicsSystem();
-        this.tetromino = createTetrominoEntity(this.entityIdCounter++, "line");
         this.gameState = createGameEntity(this.entityIdCounter++);
-        this.gameStateSystem = new GameStateSystem(this.gameState);
+        this.gameStateSystem = new GameStateSystem(this.gameState, this.eventBus);
+
+        this.randomizer();
     }
 
     loop = (timeStamp: number) => {
@@ -48,6 +63,13 @@ export class Game {
                 this.update();
                 gameComponent.accumulated -= gameComponent.timeStep;
                 updated = true;
+
+                gameComponent.lastBgAnimation += gameComponent.timeStep;
+
+                if (gameComponent.lastBgAnimation > 5000) {
+                    this.gameStateSystem.animateBackground();
+                    gameComponent.lastBgAnimation = 0;
+                }
             }
     
             if (updated) this.render();
@@ -57,6 +79,8 @@ export class Game {
     }
 
     update = () => {
+        if (!this.tetromino) return;
+
         const tetrominoComponent = this.tetromino.getComponent<TetrominoComponent>("tetromino");
         const gameComponent = this.gameState.getComponent<GameStateComponent>("game");
 
@@ -74,11 +98,13 @@ export class Game {
 
                 if (this.gameStateSystem.checkGameOver()) return;
 
-                this.tetromino = createTetrominoEntity(this.entityIdCounter++, "line");
+                this.randomizer();
                 return;
             }
 
             if (this.controls.wasJustPressed("ArrowLeft")) {
+                if (gameComponent.soundOn) this.eventBus.emit("rotate");
+
                 if (
                     !this.collisionSystem.wallCollision(tetrominoComponent.cells, this.canvas, "left") &&
                     !this.collisionSystem.horizontalBlockCollision(tetrominoComponent.cells, gameComponent.grid, "left", step)
@@ -89,6 +115,8 @@ export class Game {
             }
 
             if (this.controls.wasJustPressed("ArrowRight")) {
+                if (gameComponent.soundOn) this.eventBus.emit("rotate");
+
                 if (
                     !this.collisionSystem.wallCollision(tetrominoComponent.cells, this.canvas, "right") &&
                     !this.collisionSystem.horizontalBlockCollision(tetrominoComponent.cells, gameComponent.grid, "right", step)
@@ -99,6 +127,8 @@ export class Game {
             }
 
             if (this.controls.wasJustPressed("KeyA") || this.controls.wasJustPressed("KeyD")) {
+                if (gameComponent.soundOn) this.eventBus.emit("rotate");
+
                 const dir = this.controls.wasJustPressed("KeyA") ? "left" : "right";
 
                 const collidesWall = tetrominoComponent.cells.some(c => c.targetX < 0 || c.targetX + c.width > this.canvas.width);
@@ -131,144 +161,23 @@ export class Game {
     render = () => {
         const gameComponent = this.gameState.getComponent<GameStateComponent>("game");
 
-        if (gameComponent) {
+        if (gameComponent && this.tetromino) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.renderSystem.render([this.tetromino], gameComponent.grid);
         }
     }
 
+    randomizer = () => {
+        const types = ["line", "square", "z", "l", "s", "j"];
+        const random = Math.round(Math.random() * 5);
+        const type = types[random];
+        
+        this.tetromino = createTetrominoEntity(this.entityIdCounter++, type);
+    }
+
     start() {
-        this.settingsUi();
-    }
-
-    startGame() {
-        const gameComponent = this.gameState.getComponent<GameStateComponent>("game");
-
-        if (gameComponent) {
-            gameComponent.grid = [];
-            this.tetromino = createTetrominoEntity(this.entityIdCounter++, "line");
-            gameComponent.current = performance.now();
-            if (gameComponent.raf) cancelAnimationFrame(gameComponent.raf);
-            gameComponent.raf = requestAnimationFrame(this.loop);
-    
-            const scoreEl = document.getElementById("score");
-            if (scoreEl) scoreEl.innerText = "0";
-    
-            const startOverlay = document.getElementById("start-overlay");
-            if (startOverlay) startOverlay.style.display = "none";
-    
-            const gameOverOverlay = document.getElementById("gameover-overlay");
-            if (gameOverOverlay) gameOverOverlay.style.display = "none";
-        }
-    }
-
-    togglePause(button: HTMLButtonElement) {
-        const gameComponent = this.gameState.getComponent<GameStateComponent>("game");
-
-        if (gameComponent) {
-            if (gameComponent.raf) {
-                cancelAnimationFrame(gameComponent.raf);
-                gameComponent.raf = null;
-                button.innerText = "▶";
-            } else {
-                gameComponent.current = performance.now();
-                gameComponent.raf = requestAnimationFrame(this.loop);
-                button.innerText = "⏸";
-            }
-        }
-    }
-
-    settingsUi() {
-        const gameComponent = this.gameState.getComponent<GameStateComponent>("game");
-
-        if (gameComponent) {
-            // Основной контейнер для очков
-            const scoreWrap = document.createElement("div");
-            scoreWrap.setAttribute("class", "score-wrap");
-    
-            const scoreBlock = document.createElement("div");
-            scoreBlock.setAttribute("class", "score-block");
-    
-            const scoreLabel = document.createElement("div");
-            scoreLabel.setAttribute("class", "score-label");
-            scoreLabel.innerText = "Score:";
-    
-            const scoreValue = document.createElement("div");
-            scoreValue.setAttribute("id", "score");
-            scoreValue.innerText = "0";
-    
-            scoreBlock.appendChild(scoreLabel);
-            scoreBlock.appendChild(scoreValue);
-    
-            const buttonsBlock = document.createElement("div");
-            buttonsBlock.setAttribute("class", "buttons-block");
-    
-            // Пауза
-            const pauseBtn = document.createElement("button");
-            pauseBtn.setAttribute("class", "control-btn pause-btn");
-            pauseBtn.innerText = "⏸";
-            pauseBtn.onclick = () => {
-                if (gameComponent.raf) {
-                    cancelAnimationFrame(gameComponent.raf);
-                    gameComponent.raf = null;
-                    pauseBtn.innerText = "▶";
-                } else {
-                    gameComponent.current = performance.now();
-                    gameComponent.raf = requestAnimationFrame(this.loop);
-                    pauseBtn.innerText = "⏸";
-                }
-            };
-    
-            // Звук
-            const soundBtn = document.createElement("button");
-            soundBtn.setAttribute("class", "control-btn sound-btn");
-            soundBtn.innerText = "🔊";
-            let soundOn = true;
-            soundBtn.onclick = () => {
-                soundOn = !soundOn;
-                soundBtn.innerText = soundOn ? "🔊" : "🔇";
-                // можно управлять this.soundEnabled = soundOn
-            };
-    
-            buttonsBlock.appendChild(pauseBtn);
-            buttonsBlock.appendChild(soundBtn);
-    
-            scoreWrap.appendChild(scoreBlock);
-            scoreWrap.appendChild(buttonsBlock);
-            document.body.appendChild(scoreWrap);
-    
-            // === Start overlay ===
-            const startOverlay = document.createElement("div");
-            startOverlay.id = "start-overlay";
-            startOverlay.className = "overlay";
-            startOverlay.innerHTML = `<h1>Tetris</h1><button id="start-btn">Start</button>`;
-            document.body.appendChild(startOverlay);
-            startOverlay.style.display = "flex"; // виден только стартовый экран
-    
-            const startBtn = document.getElementById("start-btn")!;
-            startBtn.onclick = () => {
-                startOverlay.style.display = "none";
-                gameComponent.current = performance.now();
-                gameComponent.raf = requestAnimationFrame(this.loop);
-            };
-    
-            // === Game over overlay ===
-            const gameOverOverlay = document.createElement("div");
-            gameOverOverlay.id = "gameover-overlay";
-            gameOverOverlay.className = "overlay";
-            gameOverOverlay.innerHTML = `<h1>Game Over</h1><button id="restart-btn">Restart</button>`;
-            document.body.appendChild(gameOverOverlay);
-            gameOverOverlay.style.display = "none"; // скрыт по умолчанию
-    
-            const restartBtn = document.getElementById("restart-btn")!;
-            restartBtn.onclick = () => {
-                gameOverOverlay.style.display = "none";
-                gameComponent.grid = [];
-                this.tetromino = createTetrominoEntity(this.entityIdCounter++, "line");
-                document.getElementById("score")!.innerText = "0";
-                gameComponent.current = performance.now();
-                gameComponent.raf = requestAnimationFrame(this.loop);
-            };
-        }
+        this.randomizer();
+        this.gameStateSystem.settingsUi(this.loop);
+        this.gameStateSystem.setBackground();
     }
 }

@@ -1,17 +1,14 @@
 import type { Entity } from "../entity";
 import type { Pivot, TetrominoCell } from "../../types";
-import { 
-    TetrominoComponent,
-    // TypeComponent
-} from "../components";
+import { TetrominoComponent } from "../components";
 
 import { easeOutCubic, lerp } from "../../utils";
 
 export class PhysicsSystem {
     update(entities: Entity[], canvas: HTMLCanvasElement, step: number) {
         for (const entity of entities) {
-            // const type = entity.getComponent<TypeComponent>("type");
             const tetromino = entity.getComponent<TetrominoComponent>("tetromino");
+            
             if (tetromino) {
                 this.findPivot(tetromino);
                 this.fallBy(canvas, step, tetromino);
