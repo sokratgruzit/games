@@ -89,6 +89,7 @@ games/
 ├─ stay-down/ ← Экшен-аркада Stay Down
 ├─ flappy-bird/ ← ECS + Game Engine версия Flappy Bird
 ├─ tetris/ ← ECS + Game Engine версия Tetris
+├─ three-js/ ← Three.js cosmos constructor
 └─ README.md ← Этот файл
 ```
 
@@ -138,4 +139,4 @@ npm run dev
 ---
 
 🔥 Играй в мои игры прямо сейчас:
-👉 [Breakout](https://sokratgruzit.github.io/games/breakout) | [Stay Down](https://sokratgruzit.github.io/games/stay-down) | [Flappy Bird](https://sokratgruzit.github.io/games/flappy-bird)
+👉 [Breakout](https://sokratgruzit.github.io/games/breakout) | [Stay Down](https://sokratgruzit.github.io/games/stay-down) | [Flappy Bird](https://sokratgruzit.github.io/games/flappy-bird) | [Cosmos Three.js](https://sokratgruzit.github.io/games/three-js)
