@@ -10,7 +10,7 @@ export class Smoke {
 
     constructor(scene: THREE.Scene) {
         this.smokeTexture = new THREE.TextureLoader().load(
-            "/assets/textures/smoke.png"
+            import.meta.env.BASE_URL + "assets/textures/smoke.png"
         );
 
         this.geometry = new THREE.PlaneGeometry(300, 300);
