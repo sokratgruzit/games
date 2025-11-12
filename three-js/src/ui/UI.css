@@ -1,0 +1,206 @@
+.ui-container-wrap {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    max-height: 97%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ui-container {
+    position: relative;
+    background: rgba(30, 30, 30, 0.85);
+    padding: 15px;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    z-index: 1000;
+    width: 220px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: width 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 1;
+}
+
+.ui-container.collapsed {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    opacity: 0;
+}
+
+.ui-toggle-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: none;
+    border-radius: 15px;
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid black;
+    background: transparent;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.ui-toggle-btn.collapsed {
+    top: 0;
+    right: 0;
+    border: 3px solid white;
+    color: white;
+}
+
+.ui-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ui-section.collapsed {
+    display: none;
+}
+
+.ui-section-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #f0f0f0;
+    border-bottom: 1px solid #555;
+    padding-bottom: 4px;
+}
+
+.ui-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    background: #222;
+    padding-left: 6px;
+    border-radius: 6px;
+    font-size: 13px;
+    word-break: break-word;
+    height: 30px;
+}
+
+.btns-wrap {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.ui-list button {
+    background: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ff5555;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.2s;
+    border-radius: 15px;
+}
+
+.ui-list button:hover {
+    border: 2px solid #ff5555;
+}
+
+.ui-input, .ui-select {
+    width: 100%;
+    padding: 5px 6px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+    height: 30px;
+    outline: none;
+}
+
+button:disabled, button:disabled:hover {
+    background: #111;
+    color: rgba(255, 255, 255, .3);
+}
+
+.ui-button {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #4caf50;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+    height: 30px;
+    box-sizing: border-box;
+}
+
+.ui-button:hover {
+    background: #3f8b43;
+}
+
+.ui-orbit-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+}
+
+.ui-orbit-settings label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.empty {
+    display: none;
+}
+
+.ui-orbit-settings input {
+    padding: 5px 6px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+    height: 30px;
+    box-sizing: border-box;
+    outline: none;
+    width: 70px;
+}
+
+.ui-container-wrap::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ui-container-wrap::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+.ui-container-wrap::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.ui-container-wrap::-webkit-scrollbar-track {
+    background: #222;
+}
+
