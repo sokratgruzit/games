@@ -8,7 +8,6 @@ export function Modal(message: string, type: "error" | "success" = "success") {
         modal.style.top = "20px";
         modal.style.right = "20px";
         modal.style.padding = "12px 18px";
-        modal.style.borderRadius = "8px";
         modal.style.fontFamily = "sans-serif";
         modal.style.fontSize = "14px";
         modal.style.zIndex = "9999";
@@ -17,7 +16,7 @@ export function Modal(message: string, type: "error" | "success" = "success") {
     }
 
     modal.textContent = message;
-    modal.style.backgroundColor = type === "error" ? "#ff4d4f" : "#4caf50";
+    modal.style.backgroundColor = type === "error" ? "#b46365ff" : "#547655ff";
     modal.style.color = "#fff";
     modal.style.opacity = "1";
 

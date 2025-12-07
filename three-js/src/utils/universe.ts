@@ -2,16 +2,19 @@ import * as THREE from "three";
 import type { SceneManager } from "../core/SceneManager";
 
 export function randomPointInUniverse(rMin: number, rMax: number): THREE.Vector3 {
-    const r = Math.random() * (rMax - rMin) + rMin; // радиус
-    const u = Math.random() * 2 - 1;                // [-1,1]
-    const theta = Math.random() * 2 * Math.PI;     // [0, 2π]
-    const phi = Math.acos(u);
+  // равномерное распределение по объему
+  const r = Math.cbrt(Math.random() * (rMax**3 - rMin**3) + rMin**3);
 
-    const x = r * Math.sin(phi) * Math.cos(theta);
-    const y = r * Math.sin(phi) * Math.sin(theta);
-    const z = r * Math.cos(phi);
+  const u = Math.random() * 2 - 1;
+  const theta = Math.random() * 2 * Math.PI;
 
-    return new THREE.Vector3(x, y, z);
+  const sqrtTerm = Math.sqrt(1 - u * u);
+
+  const x = r * sqrtTerm * Math.cos(theta);
+  const y = r * sqrtTerm * Math.sin(theta);
+  const z = r * u;
+
+  return new THREE.Vector3(x, y, z);
 }
 
 export function getSceneObjectByName(name: string, sceneManager: SceneManager): THREE.Object3D | null {

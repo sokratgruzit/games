@@ -1,5 +1,4 @@
 import { SceneManager } from "./core/SceneManager";
-import { CameraController } from "./core/CameraController";
 import { EventBus } from "./core/EventBus";
 import { LightManager } from "./core/LightManager";
 import { CosmosEntity } from "./entities/CosmosEntity";
@@ -14,7 +13,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `<canvas id="canvas"
 const eventBus = new EventBus();
 const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 const sceneManager = new SceneManager(canvas, eventBus);
-const cameraController = new CameraController(sceneManager.scene);
 new LightManager(sceneManager.scene);
 new UIManager(eventBus);
 const time = new Time();
@@ -24,7 +22,6 @@ sceneManager.addEntity(cosmos);
 
 
 time.setUpdate((dt) => {
-  cameraController.update(dt);
   sceneManager.update(dt);
   Root.update(dt);
 });

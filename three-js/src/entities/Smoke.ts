@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+import { randomPointInUniverse } from "../utils/universe";
+import { UCONF } from "../constants/universeConfig";
+
 export class Smoke {
     private geometry: THREE.PlaneGeometry;
     private material: THREE.MeshLambertMaterial;
@@ -13,23 +16,24 @@ export class Smoke {
             import.meta.env.BASE_URL + "assets/textures/smoke.png"
         );
 
-        this.geometry = new THREE.PlaneGeometry(300, 300);
+        this.geometry = new THREE.PlaneGeometry(2000, 2000);
 
         this.material = new THREE.MeshLambertMaterial({
             color: new THREE.Color("rgba(101, 101, 142, 1)"),
             map: this.smokeTexture,
             transparent: true,
-            opacity: 0.2,         // почти прозрачный
+            opacity: 1,         // почти прозрачный
             depthWrite: false,     // не пишет в z-буфер
             blending: THREE.AdditiveBlending // светящийся, мягкий
         });
 
-        for (let p = 0; p < 150; p++) {
+        for (let p = 0; p < 50; p++) {
+            const pos = randomPointInUniverse(UCONF.zones.distant.min, UCONF.zones.distant.max);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.position.set(
-                Math.random() * 800 - 250,
-                Math.random() * 800 - 250,
-                Math.random() * 4000 - 100
+                pos.x,
+                pos.y,
+                pos.z
             );
             this.mesh.rotation.z = Math.random() * 360;
             scene.add(this.mesh);

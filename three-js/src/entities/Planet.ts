@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { vertexShader, fragmentShader } from "../shaders/comet";
 import { Orbit } from "./Orbit";
 
-export class Comet {
+export class Planet {
     public orbit: Orbit;
-    private geometry: THREE.BufferGeometry;
+    private geometry: THREE.SphereGeometry;
     private material: THREE.ShaderMaterial;
     public points: THREE.Points;
     private time = 0;
@@ -16,14 +16,12 @@ export class Comet {
 
     public speed: number;
     public belongsTo: string = "";
-    public type: string = "";
 
-    constructor(belongsTo: string, name: string, orbit: Orbit, type: string) {
+    constructor(belongsTo: string, name: string, orbit: Orbit) {
         this.belongsTo = belongsTo;
         this.name = name;
         this.orbit = orbit;
         this.speed = 0.3;
-        this.type = type;
 
         // создаем начальную геометрию
         this.geometry = this.createGeometry();
@@ -41,27 +39,8 @@ export class Comet {
         this.points.name = `comet-${name}`;
     }
 
-    private createGeometry(): THREE.BufferGeometry {
-        const geometry = new THREE.BufferGeometry();
-        const positions: number[] = [];
-        const alphas: number[] = [];
-
-        for (let i = 0; i < this.pointCount; i++) {
-            const u = Math.random();
-            const v = Math.random();
-            const theta = 2 * Math.PI * u;
-            const phi = Math.acos(2 * v - 1);
-
-            const x = this.radius * Math.sin(phi) * Math.cos(theta);
-            const y = this.radius * Math.sin(phi) * Math.sin(theta);
-            const z = this.radius * Math.cos(phi);
-
-            positions.push(x, y, z);
-            alphas.push(Math.random());
-        }
-
-        geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-        geometry.setAttribute("aAlpha", new THREE.Float32BufferAttribute(alphas, 1));
+    private createGeometry(): THREE.SphereGeometry {
+        const geometry = new THREE.SphereGeometry(1000, 16, 16);
 
         return geometry;
     }

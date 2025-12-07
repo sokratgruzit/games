@@ -11,7 +11,7 @@ export class Orbit {
     public rotationEuler = new THREE.Euler(0, 0, 0);
     // private angle = 0;
 
-    constructor(name: string, radiusX = 500, radiusZ = 500, speed = 0.01, color = 0x44ff44) {
+    constructor(name: string, radiusX = 500, radiusZ = 500, speed = 0.01, color = 0xffffff) {
         this.name = name;
         this.radiusX = radiusX;
         this.radiusZ = radiusZ;
