@@ -188,6 +188,7 @@ export class UIManager {
 
             this.eventBus.emit("addPlanet", name, orbitName, this.planets, (name: string) => {
                 //this.addCometItem(name, orbitName);
+                console.log(name)
             });
 
             input.value = "";
@@ -216,6 +217,7 @@ export class UIManager {
 
             this.eventBus.emit("addSun", name, this.sun, (name: string) => {
                 //this.addCometItem(name, orbitName);
+                console.log(name)
             });
 
             input.value = "";

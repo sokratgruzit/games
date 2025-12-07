@@ -107,6 +107,8 @@ export class SceneManager {
         this.eventBus.on("addSun", (name, uiSun, handler) => {
             if (this.sun) return Modal(`Sun "${name}" is already added.`);
 
+            console.log(uiSun)
+
             let sun = new Sun(name);
 
             this.scene.add(sun.points);
